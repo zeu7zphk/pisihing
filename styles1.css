@@ -1,0 +1,42 @@
+body {
+    background-color: black;
+    color: purple;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.container {
+    max-width: 600px;
+    margin: 80px auto;
+}
+
+#ascii-art {
+    font-family: monospace;
+    font-size: 9px;
+    margin-bottom: 20px;
+    /* Estilos de animação podem ser adicionados aqui */
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    border: 2px solid purple;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Estilos existentes omitidos para brevidade */
+
+.input-container {
+    position: relative;
+    display: inline-block;
+}
+
+.arrow {
+    position: absolute;
+    top: 20px;
+    right: -16px;
+    cursor: pointer;
+    font-size: 30px;
+}
