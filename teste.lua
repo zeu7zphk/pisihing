@@ -61,6 +61,24 @@ local function teleportBehindPlayer(targetPlayer)
     end
 end
 
+-- Função para paralisar o jogador marcado por 2 segundos
+local function freezePlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return end
+    local targetHumanoid = targetPlayer.Character:FindFirstChild("Humanoid")
+
+    if targetHumanoid then
+        -- Armazena a velocidade de movimento original
+        local originalWalkSpeed = targetHumanoid.WalkSpeed
+
+        -- Define a velocidade de movimento para 0 (paralisa o jogador)
+        targetHumanoid.WalkSpeed = 0
+
+        -- Aguarda 2 segundos e restaura a velocidade original
+        wait(2)
+        targetHumanoid.WalkSpeed = originalWalkSpeed
+    end
+end
+
 -- Função principal a ser executada quando o botão é pressionado
 local function onButtonPress()
     local nearestPlayer = findNearestPlayer()
@@ -77,6 +95,9 @@ local function onButtonPress()
         if marker then
             marker:Destroy()
         end
+
+        -- Paralisa o jogador marcado por 2 segundos
+        freezePlayer(nearestPlayer)
     else
         warn("Nenhum jogador próximo encontrado.")
     end
