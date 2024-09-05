@@ -64,6 +64,10 @@ local function findAllAnimations()
     findAnimationsInInstance(game.ReplicatedStorage)
     findAnimationsInInstance(game.ServerStorage)
     
+    -- Procura em outros locais do jogo que podem ter animações
+    findAnimationsInInstance(game.StarterPlayer)
+    findAnimationsInInstance(game.StarterCharacterScripts)
+    
     return animations
 end
 
@@ -79,7 +83,7 @@ local function displayAnimations(animations, animationsFrame, humanoid)
     -- Exibe as animações encontradas
     for _, animation in ipairs(animations) do
         local button = Instance.new("TextButton")
-        button.Text = animation.Name
+        button.Text = animation.Name ~= "" and animation.Name or "Animation (ID: "..animation.AnimationId..")"
         button.Size = UDim2.new(1, 0, 0, 30)
         button.Parent = animationsFrame
         button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
