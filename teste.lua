@@ -1,34 +1,22 @@
--- Criar um ScreenGui para armazenar o GUI
+-- Certifique-se de que o script está rodando apenas para você
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Criação de um novo ScreenGui
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "FloatingIconGui"
-screenGui.ResetOnSpawn = false -- Para que o GUI não seja resetado quando o jogador morrer
+screenGui.Parent = playerGui
 
--- Tornar o GUI visível apenas para o jogador que executa o script
-if syn and syn.protect_gui then
-    syn.protect_gui(screenGui)
-end
+-- Criação de um Frame como exemplo
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0.2, 0, 0.3, 0) -- 20% da largura e 30% da altura da tela
+frame.Position = UDim2.new(0.4, 0, 0.35, 0) -- Centralizado na tela
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Cor de fundo preta
+frame.Parent = screenGui
 
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
--- Criar um botão flutuante
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 100, 0, 50) -- Tamanho do botão (largura x altura)
-button.Position = UDim2.new(0.9, 0, 0.1, 0) -- Posição na tela (canto superior direito)
-button.Text = "Off" -- Texto inicial do botão
-button.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Cor inicial (vermelho)
-button.Parent = screenGui -- Adicionar o botão no ScreenGui
-
--- Variável para controlar o estado (ligado/desligado)
-local isOn = false
-
--- Função para alternar o estado do botão
-button.MouseButton1Click:Connect(function()
-    isOn = not isOn
-    if isOn then
-        button.Text = "On"
-        button.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Verde quando ligado
-    else
-        button.Text = "Off"
-        button.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Vermelho quando desligado
-    end
-end)
+-- Criação de um TextLabel dentro do Frame
+local textLabel = Instance.new("TextLabel")
+textLabel.Size = UDim2.new(1, 0, 1, 0) -- Preenche o Frame
+textLabel.Text = "Este é um GUI privado"
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Cor branca
+textLabel.BackgroundTransparency = 1 -- Fundo transparente
+textLabel.Parent = frame
