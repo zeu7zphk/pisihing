@@ -1,7 +1,6 @@
 -- Cria uma GUI flutuante, arrastável e minimizável que mostra as animações
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
-local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 
 -- Função para criar uma GUI flutuante
 local function createDraggableGui()
@@ -48,14 +47,37 @@ local function createDraggableGui()
     return animationsFrame
 end
 
--- Função para carregar todas as animações no jogo
-local function listAllAnimations(humanoid, animationsFrame)
-    if not humanoid then return end
-    local animator = humanoid:FindFirstChildOfClass("Animator")
-    if not animator then return end
+-- Função para encontrar todas as animações no jogo
+local function findAllAnimations()
+    local animations = {}
+    local function findAnimationsInInstance(instance)
+        -- Procura por objetos de animação dentro da instância
+        for _, obj in ipairs(instance:GetDescendants()) do
+            if obj:IsA("Animation") then
+                table.insert(animations, obj)
+            end
+        end
+    end
+    
+    -- Procura no Workspace e nos armazenamentos comuns
+    findAnimationsInInstance(game.Workspace)
+    findAnimationsInInstance(game.ReplicatedStorage)
+    findAnimationsInInstance(game.ServerStorage)
+    
+    return animations
+end
 
-    -- Percorre todas as animações do jogo e as exibe na GUI
-    local function displayAnimation(animation)
+-- Função para exibir as animações na GUI
+local function displayAnimations(animations, animationsFrame, humanoid)
+    -- Cria um Animator se o humanoid não tiver
+    local animator = humanoid:FindFirstChildOfClass("Animator")
+    if not animator then
+        animator = Instance.new("Animator")
+        animator.Parent = humanoid
+    end
+
+    -- Exibe as animações encontradas
+    for _, animation in ipairs(animations) do
         local button = Instance.new("TextButton")
         button.Text = animation.Name
         button.Size = UDim2.new(1, 0, 0, 30)
@@ -63,21 +85,28 @@ local function listAllAnimations(humanoid, animationsFrame)
         button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
         button.TextColor3 = Color3.new(1, 1, 1)
         
-        -- Quando o botão da animação for clicado, executa a animação
+        -- Quando o botão da animação for clicado, ela é executada
         button.MouseButton1Click:Connect(function()
             local animationTrack = animator:LoadAnimation(animation)
             animationTrack:Play()
         end)
     end
+end
 
-    -- Procura todas as animações no humanoide e as exibe
-    for _, animation in pairs(humanoid:GetChildren()) do
-        if animation:IsA("Animation") then
-            displayAnimation(animation)
-        end
+-- Função principal
+local function main()
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        -- Cria a GUI
+        local animationsFrame = createDraggableGui()
+        
+        -- Busca e exibe todas as animações no jogo
+        local animations = findAllAnimations()
+        displayAnimations(animations, animationsFrame, humanoid)
+    else
+        warn("Humanoid não encontrado no personagem!")
     end
 end
 
--- Cria a GUI flutuante e popula com as animações
-local animationsFrame = createDraggableGui()
-listAllAnimations(humanoid, animationsFrame)
+-- Executa o script
+main()
