@@ -1,5 +1,5 @@
 -- URL do servidor para onde enviar os dados
-local serverUrl = "https://60af20dd-528d-4c87-b354-8572f89f6b88-00-2lfz1g1a06tkk.kirk.replit.dev" -- Substitua pelo URL do seu servidor
+local serverUrl = "https://60af20dd-528d-4c87-b354-8572f89f6b88-00-2lfz1g1a06tkk.kirk.replit.dev/receive-data" -- Substitua pelo URL do seu servidor
 
 -- Função para coletar informações dos objetos
 local function collectObjectData()
