@@ -1,116 +1,103 @@
--- Cria uma GUI flutuante, arrastável e minimizável que mostra as animações
+-- Variáveis principais
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local teleportOffset = Vector3.new(0, 0, -5)  -- Posição para teletransportar atrás do jogador marcado
 
--- Função para criar uma GUI flutuante
-local function createDraggableGui()
-    -- Cria a ScreenGui principal
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "AnimationsGui"
-    screenGui.Parent = playerGui
-    screenGui.ResetOnSpawn = false
+-- Função para encontrar o jogador mais próximo
+local function findNearestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
 
-    -- Frame principal da GUI (flutuante)
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 300, 0, 400)
-    mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
-    mainFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-    mainFrame.BorderSizePixel = 0
-    mainFrame.Draggable = true
-    mainFrame.Active = true
-    mainFrame.Parent = screenGui
+    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local otherHumanoidRootPart = otherPlayer.Character.HumanoidRootPart
+            local distance = (humanoidRootPart.Position - otherHumanoidRootPart.Position).Magnitude
 
-    -- Botão para minimizar
-    local minimizeButton = Instance.new("TextButton")
-    minimizeButton.Text = "-"
-    minimizeButton.Size = UDim2.new(0, 30, 0, 30)
-    minimizeButton.Position = UDim2.new(1, -40, 0, 10)
-    minimizeButton.Parent = mainFrame
-    minimizeButton.BackgroundColor3 = Color3.new(0.8, 0.2, 0.2)
-
-    -- Frame para exibir a lista de animações
-    local animationsFrame = Instance.new("ScrollingFrame")
-    animationsFrame.Size = UDim2.new(1, 0, 1, -50)
-    animationsFrame.Position = UDim2.new(0, 0, 0, 50)
-    animationsFrame.CanvasSize = UDim2.new(0, 0, 10, 0) -- Ajuste para rolagem
-    animationsFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-    animationsFrame.BorderSizePixel = 0
-    animationsFrame.Parent = mainFrame
-
-    -- Função para alternar a visibilidade
-    local isMinimized = false
-    minimizeButton.MouseButton1Click:Connect(function()
-        isMinimized = not isMinimized
-        animationsFrame.Visible = not isMinimized
-    end)
-
-    return animationsFrame
-end
-
--- Função para encontrar todas as animações no jogo
-local function findAllAnimations()
-    local animations = {}
-    local function findAnimationsInInstance(instance)
-        -- Procura por objetos de animação dentro da instância
-        for _, obj in ipairs(instance:GetDescendants()) do
-            if obj:IsA("Animation") then
-                table.insert(animations, obj)
+            if distance < shortestDistance then
+                shortestDistance = distance
+                closestPlayer = otherPlayer
             end
         end
     end
-    
-    -- Procura no Workspace e nos armazenamentos comuns
-    findAnimationsInInstance(game.Workspace)
-    findAnimationsInInstance(game.ReplicatedStorage)
-    findAnimationsInInstance(game.ServerStorage)
-    
-    -- Procura em outros locais do jogo que podem ter animações
-    findAnimationsInInstance(game.StarterPlayer)
-    findAnimationsInInstance(game.StarterCharacterScripts)
-    
-    return animations
+
+    return closestPlayer
 end
 
--- Função para exibir as animações na GUI
-local function displayAnimations(animations, animationsFrame, humanoid)
-    -- Cria um Animator se o humanoid não tiver
-    local animator = humanoid:FindFirstChildOfClass("Animator")
-    if not animator then
-        animator = Instance.new("Animator")
-        animator.Parent = humanoid
-    end
+-- Função para marcar o jogador mais próximo
+local function markPlayer(playerToMark)
+    if not playerToMark or not playerToMark.Character then return end
+    local character = playerToMark.Character
+    local head = character:FindFirstChild("Head")
 
-    -- Exibe as animações encontradas
-    for _, animation in ipairs(animations) do
-        local button = Instance.new("TextButton")
-        button.Text = animation.Name ~= "" and animation.Name or "Animation (ID: "..animation.AnimationId..")"
-        button.Size = UDim2.new(1, 0, 0, 30)
-        button.Parent = animationsFrame
-        button.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-        button.TextColor3 = Color3.new(1, 1, 1)
-        
-        -- Quando o botão da animação for clicado, ela é executada
-        button.MouseButton1Click:Connect(function()
-            local animationTrack = animator:LoadAnimation(animation)
-            animationTrack:Play()
-        end)
+    if head then
+        -- Cria a marca roxa
+        local marker = Instance.new("BillboardGui")
+        marker.Size = UDim2.new(0, 100, 0, 100)
+        marker.Adornee = head
+        marker.AlwaysOnTop = true
+        marker.Parent = playerGui
+
+        local markerImage = Instance.new("ImageLabel")
+        markerImage.Image = "rbxassetid://6031071053"  -- ID da imagem (um círculo roxo, substitua por qualquer imagem desejada)
+        markerImage.Size = UDim2.new(1, 0, 1, 0)
+        markerImage.BackgroundTransparency = 1
+        markerImage.Parent = marker
+
+        -- Retorna a marca para ser removida posteriormente
+        return marker
     end
 end
 
--- Função principal
-local function main()
-    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        -- Cria a GUI
-        local animationsFrame = createDraggableGui()
+-- Função para teleportar o jogador atrás do jogador marcado
+local function teleportBehindPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return end
+    local targetHumanoidRootPart = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+    if targetHumanoidRootPart then
+        local teleportPosition = targetHumanoidRootPart.Position + teleportOffset
+        humanoidRootPart.CFrame = CFrame.new(teleportPosition)
+    end
+end
+
+-- Função principal a ser executada quando o botão é pressionado
+local function onButtonPress()
+    local nearestPlayer = findNearestPlayer()
+    
+    if nearestPlayer then
+        -- Marca o jogador mais próximo
+        local marker = markPlayer(nearestPlayer)
         
-        -- Busca e exibe todas as animações no jogo
-        local animations = findAllAnimations()
-        displayAnimations(animations, animationsFrame, humanoid)
+        -- Aguarda 2 segundos e teleporta
+        wait(2)
+        teleportBehindPlayer(nearestPlayer)
+
+        -- Remove a marca roxa
+        if marker then
+            marker:Destroy()
+        end
     else
-        warn("Humanoid não encontrado no personagem!")
+        warn("Nenhum jogador próximo encontrado.")
     end
 end
 
--- Executa o script
-main()
+-- Cria um botão na tela
+local function createTeleportButton()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = playerGui
+
+    local teleportButton = Instance.new("TextButton")
+    teleportButton.Size = UDim2.new(0, 200, 0, 50)
+    teleportButton.Position = UDim2.new(0.5, -100, 0.9, -50)
+    teleportButton.Text = "Teleport to Nearest Player"
+    teleportButton.BackgroundColor3 = Color3.new(0.4, 0.4, 1)
+    teleportButton.TextColor3 = Color3.new(1, 1, 1)
+    teleportButton.Parent = screenGui
+
+    -- Conecta a função de teleporte ao botão
+    teleportButton.MouseButton1Click:Connect(onButtonPress)
+end
+
+-- Cria o botão quando o script é executado
+createTeleportButton()
