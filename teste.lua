@@ -98,6 +98,7 @@ end
 -- Cria um botão na tela
 local function createTeleportButton()
     local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "TeleportGui"
     screenGui.Parent = playerGui
 
     local teleportButton = Instance.new("TextButton")
