@@ -1,24 +1,32 @@
-local DashAnimation = Instance.new("Animation")
-DashAnimation.AnimationId = HeroHunterMoveset[1].Animation
-DashAnimation.PlaybackSpeed = 1
-DashAnimation.Parent = game.Workspace.HeroHunter.Character.Humanoid
+-- Altera o nome da Ultimate e habilidades do Hero Hunter
+local heroHunter = game.Players.LocalPlayer.Character:FindFirstChild("Hero Hunter")
 
-local MixeAnimation = Instance.new("Animation")
-MixeAnimation.AnimationId = HeroHunterMoveset[2].Animation
-MixeAnimation.PlaybackSpeed = 1
-MixeAnimation.Parent = game.Workspace.HeroHunter.Character.Humanoid
+if heroHunter then
+    -- Alterar o nome da Ultimate
+    local ultimate = heroHunter:FindFirstChild("UltimateName")
+    if ultimate then
+        ultimate.Value = "FÚRIA ABSOLUTA"  -- Novo nome da Ultimate
+    end
 
-local Poder1Animation = Instance.new("Animation")
-Poder1Animation.AnimationId = HeroHunterMoveset[3].Animation
-Poder1Animation.PlaybackSpeed = 1
-Poder1Animation.Parent = game.Workspace.HeroHunter.Character.Humanoid
+    -- Alterar nomes das habilidades
+    local habilidades = {
+        "Flowing Water",
+        "Lethal Whirlwind Stream",
+        "Hunter's Grasp",
+        "Prey's Peril"
+    }
 
-local Poder2Animation = Instance.new("Animation")
-Poder2Animation.AnimationId = HeroHunterMoveset[4].Animation
-Poder2Animation.PlaybackSpeed = 1
-Poder2Animation.Parent = game.Workspace.HeroHunter.Character.Humanoid
+    local novosNomes = {
+        "Água que Flui",
+        "Furacão Letal",
+        "Garra do Caçador",
+        "Perigo da Presa"
+    }
 
-local Poder3Animation = Instance.new("Animation")
-Poder3Animation.AnimationId = HeroHunterMoveset[5].Animation
-Poder3Animation.PlaybackSpeed = 1
-Poder3Animation.Parent = game.Workspace.HeroHunter.Character.Humanoid
+    for i, habilidade in ipairs(habilidades) do
+        local habilidadeObj = heroHunter:FindFirstChild(habilidade)
+        if habilidadeObj then
+            habilidadeObj.Name = novosNomes[i]  -- Renomear habilidade
+        end
+    end
+end
