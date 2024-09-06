@@ -13,10 +13,12 @@ cursor.Position = UDim2.new(0, 0, 0, 0)
 cursor.Parent = gui
 
 -- Função para atualizar a posição da GUI com base no cursor
-local function updateCursorPosition()
-    local mouseLocation = userInputService:GetMouseLocation()
-    cursor.Position = UDim2.new(0, mouseLocation.X - cursor.Size.X.Offset / 2, 0, mouseLocation.Y - cursor.Size.Y.Offset / 2)
+local function updateCursorPosition(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        local mouseLocation = input.Position
+        cursor.Position = UDim2.new(0, mouseLocation.X - cursor.Size.X.Offset / 2, 0, mouseLocation.Y - cursor.Size.Y.Offset / 2)
+    end
 end
 
--- Atualiza a posição do cursor a cada frame
-game:GetService("RunService").RenderStepped:Connect(updateCursorPosition)
+-- Atualiza a posição do cursor quando o mouse se move
+userInputService.InputChanged:Connect(updateCursorPosition)
