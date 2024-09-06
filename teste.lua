@@ -28,6 +28,7 @@ tool.Parent = plr.Backpack
 
 -- Variável para armazenar o jogador marcado
 local markedPlayer = nil
+local followConnection = nil
 
 -- Função chamada ao usar a ferramenta "Marcar"
 tool.Equipped:Connect(function()
@@ -51,17 +52,33 @@ tool.Equipped:Connect(function()
         label.BackgroundTransparency = 1
         label.TextColor3 = Color3.new(1, 0, 0)  -- Cor vermelha para dar destaque
 
-        -- Aguarda 2 segundos antes de teleportar e executar o ataque
-        wait(2)
-
         -- Teleporta para as costas do jogador marcado
         local targetHRP = markedPlayer.Character:FindFirstChild("HumanoidRootPart")
         if targetHRP then
             chr.HumanoidRootPart.CFrame = targetHRP.CFrame * CFrame.new(0, 0, 3) -- Teleporta para trás
         end
+
+        -- Função para atualizar a posição para seguir o alvo
+        local function followPlayer()
+            while markedPlayer and markedPlayer.Character and markedPlayer.Character:FindFirstChild("HumanoidRootPart") do
+                chr.HumanoidRootPart.CFrame = markedPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                wait(0.1) -- Atualiza a posição a cada 0.1 segundos
+            end
+        end
+
+        -- Inicia o seguimento do jogador
+        followConnection = game:GetService("RunService").RenderStepped:Connect(followPlayer)
+
+        -- Aguarda 2 segundos antes de executar o ataque
+        wait(2)
+
+        -- Desconecta a função de seguir
+        if followConnection then
+            followConnection:Disconnect()
+        end
         
-        -- Executa a ferramenta "Normal Punch" após o teleporte
-        local normalPunch = plr.Backpack:FindFirstChild("Normal Punch")
+        -- Executa a ferramenta "Normal Punch"
+        local normalPunch = plr.Backpack:FindFirstChild("Flowing Water")
         if normalPunch then
             normalPunch.Parent = chr
             wait(1.6)
