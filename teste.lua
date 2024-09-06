@@ -1,6 +1,7 @@
 -- Obtém serviços necessários
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 
 -- Obtém o jogador e a tela
 local player = Players.LocalPlayer
@@ -21,6 +22,7 @@ customMouse.Parent = screenGui
 local function updateMousePosition(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement then
         local mousePosition = input.Position
+        local screenSize = workspace.CurrentCamera.ViewportSize
         customMouse.Position = UDim2.new(0, mousePosition.X, 0, mousePosition.Y)
     end
 end
