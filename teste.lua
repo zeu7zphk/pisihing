@@ -77,14 +77,14 @@ tool.Equipped:Connect(function()
             followConnection:Disconnect()
         end
         
-        -- Executa a ferramenta "Normal Punch"
-        local normalPunch = plr.Backpack:FindFirstChild("Flowing Water")
-        if normalPunch then
-            normalPunch.Parent = chr
+        -- Executa a ferramenta "Flowing Water"
+        local flowingWater = plr.Backpack:FindFirstChild("Flowing Water")
+        if flowingWater then
+            flowingWater.Parent = chr
             wait(1.6)
-            normalPunch.Parent = plr.Backpack
+            flowingWater.Parent = plr.Backpack
         else
-            warn("Normal Punch não encontrado no Backpack")
+            warn("Flowing Water não encontrado no Backpack")
         end
         
         -- Remove o emoji após o teleporte e ataque
