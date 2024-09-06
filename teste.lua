@@ -69,15 +69,17 @@ ToolName.Text = "Full Counter"
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Função para encontrar o inimigo mais próximo
+-- Função para encontrar o inimigo mais próximo (usando Magnitude para calcular a distância)
 local function findClosestEnemy()
     local character = player.Character
-    local rootPart = character:WaitForChild("HumanoidRootPart")
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return nil end
+
     local closestEnemy = nil
     local closestDistance = math.huge
-    
-    for _, v in pairs(game.Workspace.Enemies:GetChildren()) do  -- Supondo que os inimigos estejam dentro de 'Workspace.Enemies'
-        if v:FindFirstChild("HumanoidRootPart") then
+
+    for _, v in pairs(game.Workspace:GetChildren()) do
+        if v:IsA("Model") and v ~= character and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
             local distance = (v.HumanoidRootPart.Position - rootPart.Position).Magnitude
             if distance < closestDistance then
                 closestDistance = distance
@@ -85,7 +87,7 @@ local function findClosestEnemy()
             end
         end
     end
-    
+
     return closestEnemy
 end
 
