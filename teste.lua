@@ -66,24 +66,30 @@ local ToolName = baseButton.ToolName
 
 ToolName.Text = "Full Counter"
 
+-- Exemplo de script Roblox para adicionar o botão e realizar as ações desejadas
+
+-- Cria um botão na tela
 local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+local screenGui = Instance.new("ScreenGui", player.PlayerGui)
+local button = Instance.new("TextButton", screenGui)
 
--- Função para encontrar o inimigo mais próximo (usando Magnitude para calcular a distância)
+button.Size = UDim2.new(0, 200, 0, 50)
+button.Position = UDim2.new(0.5, -100, 0.9, -25)
+button.Text = "Teleportar Inimigo"
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Função para encontrar o inimigo mais próximo
 local function findClosestEnemy()
-    local character = player.Character
-    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-    if not rootPart then return nil end
-
     local closestEnemy = nil
-    local closestDistance = math.huge
+    local shortestDistance = math.huge
 
-    for _, v in pairs(game.Workspace:GetChildren()) do
-        if v:IsA("Model") and v ~= character and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
-            local distance = (v.HumanoidRootPart.Position - rootPart.Position).Magnitude
-            if distance < closestDistance then
-                closestDistance = distance
-                closestEnemy = v
+    for _, enemy in pairs(game.Workspace:GetChildren()) do
+        if enemy:IsA("Model") and enemy:FindFirstChild("Humanoid") and enemy.Name ~= player.Name then
+            local distance = (player.Character.HumanoidRootPart.Position - enemy.HumanoidRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                closestEnemy = enemy
             end
         end
     end
@@ -91,60 +97,42 @@ local function findClosestEnemy()
     return closestEnemy
 end
 
--- Criar botão na tela
-local buttonGui = Instance.new("ScreenGui")
-buttonGui.Parent = playerGui
+-- Marca o inimigo com uma caveira roxa
+local function markEnemy(enemy)
+    local head = enemy:FindFirstChild("Head")
+    if head then
+        local mark = Instance.new("BillboardGui", head)
+        mark.Size = UDim2.new(0, 100, 0, 100)
+        mark.Adornee = head
+        mark.StudsOffset = Vector3.new(0, 2, 0)
 
-local teleportButton = Instance.new("TextButton")
-teleportButton.Text = "Marcar e Teleportar"
-teleportButton.Size = UDim2.new(0, 200, 0, 50)
-teleportButton.Position = UDim2.new(0.5, -100, 0.8, 0)
-teleportButton.BackgroundColor3 = Color3.new(1, 0, 1) -- Cor roxa
-teleportButton.Parent = buttonGui
-
--- Variável para armazenar o inimigo marcado
-local markedEnemy = nil
-local markIndicator = nil
-
--- Função para teletransportar e executar a ação
-local function teleportBehindEnemy(enemy)
-    -- Teletransporta para trás do inimigo
-    local humanoidRootPart = player.Character:WaitForChild("HumanoidRootPart")
-    local enemyRootPart = enemy:WaitForChild("HumanoidRootPart")
-    humanoidRootPart.CFrame = enemyRootPart.CFrame * CFrame.new(0, 0, 3) -- Teleporta para trás do inimigo
-
-    -- Remove o indicador de marcação
-    if markIndicator then
-        markIndicator:Destroy()
+        local textLabel = Instance.new("TextLabel", mark)
+        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.Text = "💀"
+        textLabel.TextColor3 = Color3.fromRGB(255, 0, 255) -- Cor roxa para o emoji
+        textLabel.TextScaled = true
+        textLabel.BackgroundTransparency = 1
     end
 end
 
--- Função que será chamada ao apertar o botão
-teleportButton.MouseButton1Click:Connect(function()
-    -- Encontra o inimigo mais próximo
+-- Teleporta o jogador atrás do inimigo
+local function teleportBehindEnemy(enemy)
+    local enemyPosition = enemy.HumanoidRootPart.Position
+    local direction = (player.Character.HumanoidRootPart.Position - enemyPosition).unit
+    local teleportPosition = enemyPosition - direction * 10 -- Ajuste a distância conforme necessário
+    wait(2)
+    player.Character.HumanoidRootPart.CFrame = CFrame.new(teleportPosition)
+    print("Teleported behind enemy")
+end
+
+-- Define a função do botão
+button.MouseButton1Click:Connect(function()
     local closestEnemy = findClosestEnemy()
-
     if closestEnemy then
-        -- Marca o inimigo com uma caveira roxa
-        markIndicator = Instance.new("BillboardGui")
-        markIndicator.Size = UDim2.new(2, 0, 2, 0)
-        markIndicator.StudsOffset = Vector3.new(0, 3, 0)
-        markIndicator.Parent = closestEnemy.HumanoidRootPart
-        
-        local skull = Instance.new("TextLabel")
-        skull.Size = UDim2.new(1, 0, 1, 0)
-        skull.Text = "☠️"  -- Caveira
-        skull.TextColor3 = Color3.new(0.5, 0, 0.5)  -- Roxo
-        skull.BackgroundTransparency = 1
-        skull.TextScaled = true
-        skull.Parent = markIndicator
-
-        -- Espera 2 segundos antes de teletransportar
-        wait(2)
-
-        -- Teletransporta para trás do inimigo e remove a marca
+        markEnemy(closestEnemy)
         teleportBehindEnemy(closestEnemy)
     else
-        print("Nenhum inimigo encontrado.")
+        print("Nenhum inimigo encontrado")
     end
 end)
+
