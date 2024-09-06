@@ -66,48 +66,60 @@ local ToolName = baseButton.ToolName
 
 ToolName.Text = "Full Counter"
 
--- Obtém o jogador local
-local player = game.Players.LocalPlayer
-local playerGui = player.PlayerGui
+local plr = game.Players.LocalPlayer
+local chr = plr.Character
+local hum = chr.Humanoid
 
--- Função para simular o clique no botão
-local function simulateButtonClick()
-    -- Obtém o Hotbar e o Backpack
-    local hotbar = playerGui:FindFirstChild("Hotbar")
-    if not hotbar then
-        warn("Hotbar not found")
-        return
-    end
+-- Cria uma GUI e botão na tela
+local gui = Instance.new("ScreenGui", plr.PlayerGui)
+local button = Instance.new("TextButton", gui)
+button.Position = UDim2.new(0, 0, 0.61, 0)
+button.Size = UDim2.new(0, 61, 0, 55)
+button.Text = "<"
+button.TextScaled = true
 
-    local backpack = hotbar:FindFirstChild("Backpack")
-    if not backpack then
-        warn("Backpack not found")
-        return
-    end
+-- Cria o frame e os botões dentro dele
+local frame = Instance.new("Frame", gui)
+frame.Position = UDim2.new(0.063, 0, 0.434, 0)
+frame.Size = UDim2.new(0, 181, 0, 246)
 
-    local hotbarFrame = backpack:FindFirstChild("Hotbar")
-    if not hotbarFrame then
-        warn("HotbarFrame not found")
-        return
-    end
+local button1 = Instance.new("TextButton", frame)
+button1.Position = UDim2.new(0, 0, 0, 0)
+button1.Size = UDim2.new(0, 181, 0, 50)
+button1.Text = "Saitama"
 
-    -- Obtém o botão específico
-    local baseButton = hotbarFrame:FindFirstChild("1")
-    if not baseButton then
-        warn("BaseButton not found")
-        return
-    end
+local button2 = Instance.new("TextButton", frame)
+button2.Position = UDim2.new(0, 1, 0.200, 0)
+button2.Size = UDim2.new(0, 181, 0, 50)
+button2.Text = "Garou"
 
-    -- Obtém a função associada ao clique
-    local buttonFunction = baseButton:FindFirstChild("ClickFunction")
-    if buttonFunction then
-        -- Chama a função diretamente
-        buttonFunction:Invoke() -- ou buttonFunction:Fire(), dependendo do tipo de função
-    else
-        warn("ClickFunction not found")
-    end
-end
+-- Conecta o botão 1 (Saitama) para equipar e usar ferramentas
+button1.MouseButton1Click:Connect(function()
+    -- Equipa a primeira ferramenta
+    local tool = plr.Backpack["Slash"]
+    tool.Parent = chr
 
--- Executa a função para simular o clique no botão
-simulateButtonClick()
+    -- Espera antes de devolver a ferramenta ao Backpack
+    wait(1.6)
+    tool.Parent = plr.Backpack
 
+    -- Equipa a segunda ferramenta
+    local tool2 = plr.Backpack.Shove
+    tool2.Parent = chr
+
+    -- Espera antes de devolver a segunda ferramenta ao Backpack
+    wait(1)
+    tool2.Parent = plr.Backpack
+
+    -- Envia um evento de servidor com as teclas pressionadas
+    local args = {
+        [1] = {
+            ["Dash"] = Enum.KeyCode.W,
+            ["Key"] = Enum.KeyCode.Q,
+            ["Goal"] = "KeyPress"
+        }
+    }
+
+    -- Dispara o evento de servidor
+    game:GetService("Players").LocalPlayer.Character.Communicate:FireServer(unpack(args))
+end)
