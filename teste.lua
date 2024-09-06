@@ -1,39 +1,21 @@
--- Obtém serviços necessários
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local StarterGui = game:GetService("StarterGui")
+-- Cria uma GUI personalizada para o mouse
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local gui = Instance.new("ScreenGui")
+gui.Name = "CustomMouseGUI"
+gui.Parent = player:WaitForChild("PlayerGui")
 
--- Obtém o jogador e a tela
-local player = Players.LocalPlayer
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "CustomMouseGui"
-screenGui.Parent = player:WaitForChild("PlayerGui")
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 50, 0, 50)
+frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Cor vermelha
+frame.BackgroundTransparency = 0.5
+frame.Position = UDim2.new(0, 0, 0, 0)
+frame.Parent = gui
 
--- Cria um ImageLabel para o mouse personalizado
-local customMouse = Instance.new("ImageLabel")
-customMouse.Name = "CustomMouse"
-customMouse.Size = UDim2.new(0, 32, 0, 32) -- Tamanho do cursor (32x32 pixels)
-customMouse.Image = "rbxassetid://123456789" -- Substitua pelo ID da imagem do cursor
-customMouse.BackgroundTransparency = 1
-customMouse.Position = UDim2.new(0, 0, 0, 0)
-customMouse.Parent = screenGui
-
--- Função para atualizar a posição do cursor
-local function updateMousePosition(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        local mousePosition = input.Position
-        local screenSize = workspace.CurrentCamera.ViewportSize
-        customMouse.Position = UDim2.new(0, mousePosition.X, 0, mousePosition.Y)
-    end
+-- Atualiza a posição da GUI para seguir o cursor
+local function updatePosition()
+    frame.Position = UDim2.new(0, mouse.X - frame.Size.X.Offset / 2, 0, mouse.Y - frame.Size.Y.Offset / 2)
 end
 
--- Conecta o evento para capturar o movimento do mouse
-UserInputService.InputChanged:Connect(updateMousePosition)
-
--- Oculta o cursor padrão do Roblox
-local function hideDefaultMouse()
-    local mouse = player:GetMouse()
-    mouse.Icon = ""
-end
-
-hideDefaultMouse()
+-- Conecta a função de atualização ao evento RenderStepped
+game:GetService("RunService").RenderStepped:Connect(updatePosition)
