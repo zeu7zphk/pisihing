@@ -28,7 +28,7 @@ button2.Text = "Garou"
 -- Conecta o botão 1 (Saitama) para equipar e usar ferramentas
 button1.MouseButton1Click:Connect(function()
     -- Equipa a primeira ferramenta
-    local tool = plr.Backpack["Consecutive Punches"]
+    local tool = plr.Backpack["Normal Punch"]
     tool.Parent = chr
 
     -- Espera antes de devolver a ferramenta ao Backpack
