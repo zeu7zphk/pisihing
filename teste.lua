@@ -30,7 +30,7 @@ tool.Parent = plr.Backpack
 local markedPlayer = nil
 
 -- Função chamada ao usar a ferramenta "Marcar"
-tool.Activated:Connect(function()
+tool.Equipped:Connect(function()
     -- Encontra o jogador mais próximo
     local closestPlayer = getClosestPlayer()
     
@@ -39,8 +39,8 @@ tool.Activated:Connect(function()
         
         -- Marca o jogador com um emoji ☠️ acima da cabeça
         local billboard = Instance.new("BillboardGui", closestPlayer.Character.Head)
-        billboard.Size = UDim2.new(2, 0, 2, 0)  -- Aumenta o tamanho da marca
-        billboard.StudsOffset = Vector3.new(0, 2, 0) -- Levanta o emoji acima da cabeça
+        billboard.Size = UDim2.new(5, 0, 5, 0)  -- Aumenta o tamanho da marca
+        billboard.StudsOffset = Vector3.new(0, 3, 0) -- Levanta o emoji mais alto acima da cabeça
         billboard.Adornee = closestPlayer.Character.Head
         billboard.AlwaysOnTop = true  -- Garante que a marca esteja sempre visível
 
