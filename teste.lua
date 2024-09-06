@@ -66,9 +66,53 @@ local ToolName = baseButton.ToolName
 
 ToolName.Text = "Full Counter"
 
-Button1.MouseButton1Click:Connect(function()
-    local player = game.Players.LocalPlayer
-    local mouse = player:GetMouse()
-    local targetPos = mouse.Hit.p
-    player.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos)
-    print("Teleported to Aim Location")
+-- Obtém o jogador local
+local player = game.Players.LocalPlayer
+local playerGui = player.PlayerGui
+
+-- Função para simular o clique no botão
+local function clickButton()
+    -- Obtém o Hotbar e o Backpack
+    local hotbar = playerGui:FindFirstChild("Hotbar")
+    if not hotbar then
+        warn("Hotbar not found")
+        return
+    end
+
+    local backpack = hotbar:FindFirstChild("Backpack")
+    if not backpack then
+        warn("Backpack not found")
+        return
+    end
+
+    local hotbarFrame = backpack:FindFirstChild("Hotbar")
+    if not hotbarFrame then
+        warn("HotbarFrame not found")
+        return
+    end
+
+    -- Obtém o botão específico e simula o clique
+    local baseButton = hotbarFrame:FindFirstChild("1")
+    if not baseButton then
+        warn("BaseButton not found")
+        return
+    end
+
+    -- Verifica se o botão tem um evento MouseButton1Click
+    local toolName = baseButton:FindFirstChild("ToolName")
+    if not toolName then
+        warn("ToolName not found")
+        return
+    end
+
+    -- Simula a ação associada ao clique do botão
+    if baseButton:FindFirstChild("MouseButton1Click") then
+        baseButton.MouseButton1Click:Fire()
+    else
+        warn("MouseButton1Click event not found on BaseButton")
+    end
+end
+
+-- Executa a função para simular o clique no botão
+clickButton()
+
