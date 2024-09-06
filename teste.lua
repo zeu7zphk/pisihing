@@ -1,79 +1,68 @@
--- Estados de animação
-hero.Humanoid.WalkState = Enum.HumanoidStateType.Walk
-hero.Humanoid.RunState = Enum.HumanoidStateType.Run
-hero.Humanoid.JumpState = Enum.HumanoidStateType.Jump
-hero.Humanoid.DodgeState = Enum.HumanoidStateType.Dodge
-hero.Humanoid.WaitState = Enum.HumanoidStateType.Wait
-hero.Humanoid.RecoilState = Enum.HumanoidStateType.Recoil
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
 
--- Dicas de animação
-hero.Humanoid:LoadAnimation("rbxassetid:1234567890"):Play()
-hero.Humanoid:LoadAnimation("rbxassetid:9876543210"):Play()
+-- Animações
+local dashAnimation = Instance.new("Animation")
+dashAnimation.AnimationId = "ANIMATION_DASH_ID" -- Coloque o ID da sua animação aqui
 
--- Fatores de movimento
-hero.Humanoid.MoveDirection = Vector3.new(0, 0, 0)
-hero.Humanoid.WalkDirection = Vector3.new(0, 0, 0)
-hero.Humanoid.RunDirection = Vector3.new(0, 0, 0)
-hero.Humanoid.JumpDirection = Vector3.new(0, 0, 0)
-hero.Humanoid.DodgeDirection = Vector3.new(0, 0, 0)
+local ability1Animation = Instance.new("Animation")
+ability1Animation.AnimationId = "ANIMATION_ABILITY_1_ID" -- Coloque o ID da sua animação aqui
 
--- Funções do movimento
-function hero.HeroMove()
-    -- Script do movimento aqui...
+-- Carregar animações
+local dashAnimTrack = Humanoid:LoadAnimation(dashAnimation)
+local ability1AnimTrack = Humanoid:LoadAnimation(ability1Animation)
+
+-- Função para encontrar o jogador mais próximo
+function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+    
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= Player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (player.Character.HumanoidRootPart.Position - Character.HumanoidRootPart.Position).magnitude
+            
+            if distance < shortestDistance then
+                shortestDistance = distance
+                closestPlayer = player
+            end
+        end
+    end
+    
+    return closestPlayer
 end
 
-function hero.FlowingWater()
-    hero.Humanoid:ChangeState(Enum.HumanoidStateType.Dodge)
-    -- Script da morte aqui...
-end
+-- Conectar os botões da GUI às funções correspondentes
+local gui = Player.PlayerGui:WaitForChild("ScreenGui")
 
-function hero.Lethal()
-    hero.Humanoid:ChangeState(Enum.HumanoidStateType.Recoil)
-    -- Script da bind aqui...
-end
-
-function hero.HunterGraps()
-    -- Script da teste aqui...
-end
-
-function hero.PreyPeril()
-    hero.Humanoid:ChangeState(Enum.HumanoidStateType.Jump)
-    -- Script da esquiva aqui...
-end
-
--- Ativação dos movimentos
-hero.Humanoid.StateChanged:Connect(function(oldState, newState)
-    if newState == Enum.HumanoidStateType.Dodge then
-        hero.FlowingWater()
-    elseif newState == Enum.HumanoidStateType.Recoil then
-        hero.Lethal()
-    end
+gui.ButtonDash.MouseButton1Click:Connect(function()
+    dashAnimTrack:Play()
+    -- Adicione lógica para movimento de dash aqui
 end)
 
-hero:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
-    if hero.Humanoid.WalkState == Enum.HumanoidStateType.Walk then
-        -- Script do andar...
-    end
+gui.ButtonAbility1.MouseButton1Click:Connect(function()
+    ability1AnimTrack:Play()
+    -- Adicione a lógica para a habilidade 1 aqui
 end)
 
-hero:GetPropertyChangedSignal("RunSpeed"):Connect(function()
-    if hero.Humanoid.RunState == Enum.HumanoidStateType.Run then
-        -- Script da corrida...
-    end
+gui.ButtonAbility2.MouseButton1Click:Connect(function()
+    -- Adicione a lógica para a habilidade 2 aqui
 end)
 
-hero:GetPropertyChangedSignal("JumpPower"):Connect(function()
-    if hero.Humanoid.JumpState == Enum.HumanoidStateType.Jump then
-        -- Script do salto...
-    end
+gui.ButtonAbility3.MouseButton1Click:Connect(function()
+    -- Adicione a lógica para a habilidade 3 aqui
 end)
 
--- Poder 5: Ao ser apertado da trás do jogador mais próximo e usa a habilidade 1
-hero.Humanoid.PositionChanged:Connect(function(newPosition)
-    if newPosition - hero.Humanoid.Position < 3 then
-        hero.HunterGraps()
-    end
+gui.ButtonAbility4.MouseButton1Click:Connect(function()
+    -- Adicione a lógica para a habilidade 4 aqui
 end)
 
--- Desliga o script
-game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+gui.ButtonAbility5.MouseButton1Click:Connect(function() -- Habilidade 5 Teleportar e usar habilidade 1
+    local closestPlayer = getClosestPlayer()
+    if closestPlayer and closestPlayer.Character and closestPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        Character:SetPrimaryPartCFrame(closestPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)) -- Teleporta atrás do jogador mais próximo
+        ability1AnimTrack:Play() -- Usa a habilidade 1
+        
+        -- Adicione lógica adicional da habilidade aqui se necessário.
+    end
+end)
