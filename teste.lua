@@ -1,34 +1,41 @@
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Criar o ScreenGui
-local newGui = Instance.new("ScreenGui")
-newGui.Name = "Hotbar"
-newGui.Parent = playerGui
+-- Criar o ScreenGui (Hotbar)
+local hotbar = Instance.new("ScreenGui")
+hotbar.Name = "Hotbar"
+hotbar.Parent = playerGui
 
--- Criar o Frame do Hotbar
+-- Criar o Frame do Backpack
+local backpack = Instance.new("Frame")
+backpack.Name = "Backpack"
+backpack.Size = UDim2.new(0, 400, 0, 100)  -- Define o tamanho do Backpack
+backpack.Position = UDim2.new(0.5, -200, 0.8, 0)  -- Posição no meio da tela
+backpack.BackgroundColor3 = Color3.fromRGB(50, 50, 50)  -- Cor de fundo
+backpack.Parent = hotbar
+
+-- Criar o HotbarFrame dentro do Backpack
 local hotbarFrame = Instance.new("Frame")
-hotbarFrame.Name = "HotbarFrame"
-hotbarFrame.Size = UDim2.new(0, 300, 0, 100)  -- Tamanho do hotbar
-hotbarFrame.Position = UDim2.new(0.5, -150, 0.9, -50)  -- Posição central na parte inferior
-hotbarFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Cor de fundo
-hotbarFrame.Parent = newGui
+hotbarFrame.Name = "Hotbar"
+hotbarFrame.Size = UDim2.new(1, 0, 1, 0)  -- Tamanho do HotbarFrame
+hotbarFrame.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+hotbarFrame.Parent = backpack
 
--- Criar o Botão Base
+-- Criar o botão Base (BaseButton)
 local baseButton = Instance.new("TextButton")
-baseButton.Name = "BaseButton"
-baseButton.Size = UDim2.new(0, 100, 0, 100)  -- Tamanho do botão
-baseButton.Position = UDim2.new(0, 0, 0, 0)  -- Posição no hotbar
-baseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Cor de fundo vermelha
-baseButton.Text = "Use Tool"
+baseButton.Name = "Base"
+baseButton.Size = UDim2.new(0, 100, 0, 50)  -- Tamanho do botão
+baseButton.Position = UDim2.new(0, 0, 0, 0)  -- Posição no HotbarFrame
+baseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Cor vermelha
+baseButton.Text = "Tool"
 baseButton.Parent = hotbarFrame
 
--- Criar o Label ToolName
+-- Criar o TextLabel para o ToolName
 local toolName = Instance.new("TextLabel")
 toolName.Name = "ToolName"
-toolName.Size = UDim2.new(0, 100, 0, 50)  -- Tamanho do label
-toolName.Position = UDim2.new(0, 0, 1, 0)  -- Abaixo do botão
-toolName.Text = "Red"  -- Texto inicial
+toolName.Size = UDim2.new(1, 0, 0.5, 0)  -- Tamanho do label
+toolName.Position = UDim2.new(0, 0, 1, 0)  -- Posição logo abaixo do botão
+toolName.Text = "Red"  -- Nome inicial da ferramenta
 toolName.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Cor do texto
-toolName.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Cor de fundo do label
+toolName.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Fundo preto
 toolName.Parent = baseButton
