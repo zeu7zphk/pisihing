@@ -1,4 +1,3 @@
-
 local plr = game.Players.LocalPlayer
 local chr = plr.Character
 local hum = chr.Humanoid
@@ -29,7 +28,7 @@ button2.Text = "Garou"
 -- Conecta o botão 1 (Saitama) para equipar e usar ferramentas
 button1.MouseButton1Click:Connect(function()
     -- Equipa a primeira ferramenta
-    local tool = plr.Backpack["Slash"]
+    local tool = plr.Backpack["Consecutive Punches"]
     tool.Parent = chr
 
     -- Espera antes de devolver a ferramenta ao Backpack
