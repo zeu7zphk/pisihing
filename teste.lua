@@ -20,19 +20,17 @@ local function getClosestPlayer()
     return closestPlayer
 end
 
--- Cria a GUI e botão no canto superior direito
-local gui = Instance.new("ScreenGui", plr.PlayerGui)
-local button = Instance.new("TextButton", gui)
-button.Position = UDim2.new(0.85, 0, 0, 0) -- Superior direito
-button.Size = UDim2.new(0, 100, 0, 50)
-button.Text = "Marcar"
-button.TextScaled = true
+-- Criação da ferramenta "Marcar"
+local tool = Instance.new("Tool")
+tool.Name = "Marcar"
+tool.RequiresHandle = false
+tool.Parent = plr.Backpack
 
 -- Variável para armazenar o jogador marcado
 local markedPlayer = nil
 
--- Função chamada ao clicar no botão
-button.MouseButton1Click:Connect(function()
+-- Função chamada ao usar a ferramenta "Marcar"
+tool.Activated:Connect(function()
     -- Encontra o jogador mais próximo
     local closestPlayer = getClosestPlayer()
     
@@ -41,14 +39,17 @@ button.MouseButton1Click:Connect(function()
         
         -- Marca o jogador com um emoji ☠️ acima da cabeça
         local billboard = Instance.new("BillboardGui", closestPlayer.Character.Head)
-        billboard.Size = UDim2.new(1, 0, 1, 0)
+        billboard.Size = UDim2.new(2, 0, 2, 0)  -- Aumenta o tamanho da marca
+        billboard.StudsOffset = Vector3.new(0, 2, 0) -- Levanta o emoji acima da cabeça
         billboard.Adornee = closestPlayer.Character.Head
-        
+        billboard.AlwaysOnTop = true  -- Garante que a marca esteja sempre visível
+
         local label = Instance.new("TextLabel", billboard)
         label.Size = UDim2.new(1, 0, 1, 0)
         label.Text = "☠️"
         label.TextScaled = true
         label.BackgroundTransparency = 1
+        label.TextColor3 = Color3.new(1, 0, 0)  -- Cor vermelha para dar destaque
 
         -- Aguarda 2 segundos antes de teleportar e executar o ataque
         wait(2)
@@ -60,11 +61,11 @@ button.MouseButton1Click:Connect(function()
         end
         
         -- Executa a ferramenta "Normal Punch" após o teleporte
-        local tool = plr.Backpack:FindFirstChild("Normal Punch")
-        if tool then
-            tool.Parent = chr
+        local normalPunch = plr.Backpack:FindFirstChild("Normal Punch")
+        if normalPunch then
+            normalPunch.Parent = chr
             wait(1.6)
-            tool.Parent = plr.Backpack
+            normalPunch.Parent = plr.Backpack
         else
             warn("Normal Punch não encontrado no Backpack")
         end
