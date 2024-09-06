@@ -71,7 +71,7 @@ local player = game.Players.LocalPlayer
 local playerGui = player.PlayerGui
 
 -- Função para simular o clique no botão
-local function clickButton()
+local function simulateButtonClick()
     -- Obtém o Hotbar e o Backpack
     local hotbar = playerGui:FindFirstChild("Hotbar")
     if not hotbar then
@@ -91,28 +91,23 @@ local function clickButton()
         return
     end
 
-    -- Obtém o botão específico e simula o clique
+    -- Obtém o botão específico
     local baseButton = hotbarFrame:FindFirstChild("1")
     if not baseButton then
         warn("BaseButton not found")
         return
     end
 
-    -- Verifica se o botão tem um evento MouseButton1Click
-    local toolName = baseButton:FindFirstChild("ToolName")
-    if not toolName then
-        warn("ToolName not found")
-        return
-    end
-
-    -- Simula a ação associada ao clique do botão
-    if baseButton:FindFirstChild("MouseButton1Click") then
-        baseButton.MouseButton1Click:Fire()
+    -- Obtém a função associada ao clique
+    local buttonFunction = baseButton:FindFirstChild("ClickFunction")
+    if buttonFunction then
+        -- Chama a função diretamente
+        buttonFunction:Invoke() -- ou buttonFunction:Fire(), dependendo do tipo de função
     else
-        warn("MouseButton1Click event not found on BaseButton")
+        warn("ClickFunction not found")
     end
 end
 
 -- Executa a função para simular o clique no botão
-clickButton()
+simulateButtonClick()
 
